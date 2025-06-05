@@ -3,7 +3,7 @@ import Parser from 'rss-parser';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
-
+const LOOPTIME = process.env.LOOPTIME
 const RSS_URL = process.env.RSS;
 const DISCORD_WEBHOOK_URL = process.env.DISCORD;
 const parser = new Parser();
@@ -38,9 +38,9 @@ async function sendToDiscord(post: any): Promise<void> {
         },
         timestamp: new Date(),
     };    
-    console.log(post);
+//    console.log(post);
     const imageUrlMatch = post.content.match(/<img[^>]+src="([^">]+)"/);
-    console.log(imageUrlMatch);
+//    console.log(imageUrlMatch);
     embed.image = { url: imageUrlMatch[1], };
     const message = {
         embeds: [embed],
@@ -58,4 +58,4 @@ async function sendToDiscord(post: any): Promise<void> {
     }
 }
 checkRSSFeed();
-setInterval(checkRSSFeed, 60000);
+setInterval(checkRSSFeed, LOOPTIME);

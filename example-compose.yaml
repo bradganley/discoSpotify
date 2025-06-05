@@ -7,5 +7,6 @@ services:
     environment:
       RSS: 
       DISCORD:
+      LOOPTIME: 
     restart: unless-stopped
 
