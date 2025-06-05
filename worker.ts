@@ -1,11 +1,11 @@
-iimport fetch from 'node-fetch';
+import fetch from 'node-fetch';
 import Parser from 'rss-parser';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
 
 const RSS_URL = process.env.RSS;
-const DISCORD_WEBHOOK_URL = process.env.DISCORD
+const DISCORD_WEBHOOK_URL = process.env.DISCORD;
 const parser = new Parser();
 
 if (!RSS_URL || !DISCORD_WEBHOOK_URL) {
@@ -28,14 +28,20 @@ async function checkRSSFeed(): Promise<void> {
         console.error('Shit:', error);
     }
 }
-async function sendToDiscord(post: { title: string; link: string }): Promise<void> {
+async function sendToDiscord(post: any): Promise<void> {
     const embed = {
-        title: post.link,
+        title: post.title,
+        url: post.link,
         color: 0x1DB954,
         footer: {
             text: 'New track on KMOE',
         },
-        timestamp: new Date();
+        timestamp: new Date(),
+    };    
+    console.log(post);
+    const imageUrlMatch = post.content.match(/<img[^>]+src="([^">]+)"/);
+    console.log(imageUrlMatch);
+    embed.image = { url: imageUrlMatch[1], };
     const message = {
         embeds: [embed],
     };
@@ -51,4 +57,5 @@ async function sendToDiscord(post: { title: string; link: string }): Promise<voi
         console.error('Fuck:', error);
     }
 }
+checkRSSFeed();
 setInterval(checkRSSFeed, 60000);
