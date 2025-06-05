@@ -1,0 +1,47 @@
+iimport fetch from 'node-fetch';
+import Parser from 'rss-parser';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
+const RSS_URL = process.env.RSS;
+const DISCORD_WEBHOOK_URL = process.env.DISCORD
+const parser = new Parser();
+
+if (!RSS_URL || !DISCORD_WEBHOOK_URL) {
+    console.error('put RSS and DISCORD urls in your .env file, dumbass');
+    process.exit(1);
+}
+
+let lastPostTitle: string = '';
+
+async function checkRSSFeed(): Promise<void> {
+    try {
+        const feed = await parser.parseURL(RSS_URL);
+        const latestPost = feed.items[0];
+
+        if (latestPost.title !== lastPostTitle) {
+            lastPostTitle = latestPost.title;
+            await sendToDiscord(latestPost);
+        }
+    } catch (error) {
+        console.error('Shit:', error);
+    }
+}
+async function sendToDiscord(post: { title: string; link: string }): Promise<void> {
+    const message = {
+        content: `**${post.title}**\n${post.link}`
+    };
+
+    try {
+        await fetch(DISCORD_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(message),
+        });
+        console.log('Message sent to Discord:', post.title);
+    } catch (error) {
+        console.error('Fuck:', error);
+    }
+}
+setInterval(checkRSSFeed, 60000);
