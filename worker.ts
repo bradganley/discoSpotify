@@ -29,8 +29,15 @@ async function checkRSSFeed(): Promise<void> {
     }
 }
 async function sendToDiscord(post: { title: string; link: string }): Promise<void> {
+    const embed = {
+        title: post.link,
+        color: 0x1DB954,
+        footer: {
+            text: 'New track on KMOE',
+        },
+        timestamp: new Date();
     const message = {
-        content: `**${post.title}**\n${post.link}`
+        embeds: [embed],
     };
 
     try {
