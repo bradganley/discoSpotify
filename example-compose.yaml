@@ -1,0 +1,11 @@
+services:
+  SMART0:
+    image: rssbot
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      RSS: 
+      DISCORD:
+    restart: unless-stopped
+
