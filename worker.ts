@@ -6,6 +6,7 @@ dotenv.config();
 const LOOPTIME = process.env.LOOPTIME
 const RSS_URL = process.env.RSS;
 const DISCORD_WEBHOOK_URL = process.env.DISCORD;
+const footer = process.env.FOOTER || "New track added"
 const parser = new Parser();
 
 if (!RSS_URL || !DISCORD_WEBHOOK_URL) {
@@ -19,7 +20,7 @@ async function checkRSSFeed(): Promise<void> {
     try {
         const feed = await parser.parseURL(RSS_URL);
         const latestPost = feed.items[0];
-
+        console.log("Checking at " + new Date());  
         if (latestPost.title !== lastPostTitle) {
             lastPostTitle = latestPost.title;
             await sendToDiscord(latestPost);
@@ -30,11 +31,11 @@ async function checkRSSFeed(): Promise<void> {
 }
 async function sendToDiscord(post: any): Promise<void> {
     const embed = {
-        title: post.title,
+        title: `${post.title} - ${post.author}`,
         url: post.link,
         color: 0x1DB954,
         footer: {
-            text: 'New track on KMOE',
+            text: footer,
         },
         timestamp: new Date(),
     };    
