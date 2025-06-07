@@ -7,6 +7,7 @@ const LOOPTIME = process.env.LOOPTIME
 const RSS_URL = process.env.RSS;
 const DISCORD_WEBHOOK_URL = process.env.DISCORD;
 const footer = process.env.FOOTER || "New track added"
+const content = process.env.CONTENT;
 const parser = new Parser();
 
 if (!RSS_URL || !DISCORD_WEBHOOK_URL) {
@@ -34,6 +35,7 @@ async function sendToDiscord(post: any): Promise<void> {
         title: `${post.title} - ${post.author}`,
         url: post.link,
         color: 0x1DB954,
+        description: content,
         footer: {
             text: footer,
         },
